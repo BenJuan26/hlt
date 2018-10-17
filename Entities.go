@@ -59,7 +59,7 @@ func (s *Ship) GetPlayerID() int {
 }
 
 func (s *Ship) String() string {
-	return fmt.Sprintf("Ship{%s,halite=%d}", s.E.Pos, s.Halite)
+	return fmt.Sprintf("Ship{id=%d,%s,halite=%d}", s.GetID(), s.E.Pos, s.Halite)
 }
 
 // NewShip - Creates a new ship
