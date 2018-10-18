@@ -2,6 +2,7 @@ package hlt
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/BenJuan26/hlt/input"
 )
@@ -15,6 +16,23 @@ type GameMap struct {
 
 func (gm *GameMap) String() string {
 	return fmt.Sprintf("GameMap{height=%d,width=%d,cells=%d}", gm.height, gm.width, len(gm.Cells))
+}
+
+// MapCellsByHalite returns a list of MapCells within the given radius
+// sorted by Halite in descending order
+func (gm *GameMap) MapCellsByHalite(center *Position, radius int) []*MapCell {
+	var list []*MapCell
+	for y := center.GetY() - radius; y < center.GetY()+radius; y++ {
+		for x := center.GetX() - radius; x < center.GetX()+radius; x++ {
+			pos := &Position{x, y}
+			normalized := gm.Normalize(pos)
+			list = append(list, gm.AtPosition(normalized))
+		}
+	}
+
+	sort.Sort(sort.Reverse(ByHalite(list)))
+
+	return list
 }
 
 // NewGameMap - Creates an empty map

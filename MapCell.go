@@ -10,6 +10,13 @@ type MapCell struct {
 	structure *Entity
 }
 
+// ByHalite implements sort.Interface to sort MapCell objects by their Halite
+type ByHalite []*MapCell
+
+func (s ByHalite) Len() int           { return len(s) }
+func (s ByHalite) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+func (s ByHalite) Less(i, j int) bool { return s[i].Halite < s[j].Halite }
+
 func (m *MapCell) String() string {
 	return fmt.Sprintf("Map{halite=%d}", m.Halite)
 }

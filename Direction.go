@@ -9,6 +9,14 @@ type Direction struct {
 	charValue byte
 }
 
+func (d *Direction) GetCharValue() byte {
+	return d.charValue
+}
+
+func (d *Direction) Equals(other *Direction) bool {
+	return d.charValue == other.GetCharValue()
+}
+
 // Single character abbreviations for directions
 const (
 	NORTH byte = 'n'
