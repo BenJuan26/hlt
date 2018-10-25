@@ -2,6 +2,7 @@ package hlt
 
 import (
 	"fmt"
+	"math/rand"
 	"sort"
 
 	"github.com/BenJuan26/hlt/input"
@@ -14,19 +15,38 @@ type GameMap struct {
 	Cells  [][]*MapCell
 }
 
+// GetWidth returns the map's width
+func (gm *GameMap) GetWidth() int {
+	return gm.width
+}
+
+// GetHeight returns the map's height
+func (gm *GameMap) GetHeight() int {
+	return gm.height
+}
+
 func (gm *GameMap) String() string {
 	return fmt.Sprintf("GameMap{height=%d,width=%d,cells=%d}", gm.height, gm.width, len(gm.Cells))
 }
 
-// MapCellsByHalite returns a list of MapCells within the given radius
+// CellsByHalite returns a list of MapCells within the given radius
 // sorted by Halite in descending order
-func (gm *GameMap) MapCellsByHalite(center *Position, radius int) []*MapCell {
+func (gm *GameMap) CellsByHalite(center *Position, radius int) []*MapCell {
 	var list []*MapCell
-	for y := center.GetY() - radius; y < center.GetY()+radius; y++ {
-		for x := center.GetX() - radius; x < center.GetX()+radius; x++ {
-			pos := &Position{x, y}
-			normalized := gm.Normalize(pos)
-			list = append(list, gm.AtPosition(normalized))
+	if radius > 0 {
+		for y := center.GetY() - radius; y < center.GetY()+radius; y++ {
+			for x := center.GetX() - radius; x < center.GetX()+radius; x++ {
+				pos := &Position{x, y}
+				normalized := gm.Normalize(pos)
+				list = append(list, gm.AtPosition(normalized))
+			}
+		}
+	} else {
+		for y := 0; y < gm.height; y++ {
+			for x := 0; x < gm.width; x++ {
+				pos := &Position{x, y}
+				list = append(list, gm.AtPosition(pos))
+			}
 		}
 	}
 
@@ -159,7 +179,12 @@ func (gm *GameMap) unsafeMoves(source *Position, destination *Position) []*Direc
 			yDirection = South()
 		}
 	}
-	return append(append([]*Direction{}, xDirection), yDirection)
+
+	if rand.Intn(2) == 0 {
+		return append(append([]*Direction{}, xDirection), yDirection)
+	}
+
+	return append(append([]*Direction{}, yDirection), xDirection)
 }
 
 // Update -
