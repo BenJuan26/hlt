@@ -40,3 +40,8 @@ func (m *MapCell) HasStructure() bool {
 func (m *MapCell) MarkUnsafe(s *Ship) {
 	m.ship = s
 }
+
+// MarkSafe removes the ship from the cell
+func (m *MapCell) MarkSafe() {
+	m.ship = nil
+}
