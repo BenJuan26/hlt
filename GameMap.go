@@ -29,24 +29,24 @@ func (gm *GameMap) String() string {
 	return fmt.Sprintf("GameMap{height=%d,width=%d,cells=%d}", gm.height, gm.width, len(gm.Cells))
 }
 
+// AbsInt returns the absolute value of the given integer
+func AbsInt(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
 // CellsByHalite returns a list of MapCells within the given radius
 // sorted by Halite in descending order
 func (gm *GameMap) CellsByHalite(center *Position, radius int) []*MapCell {
 	var list []*MapCell
-	if radius > 0 {
-		for y := center.GetY() - radius; y < center.GetY()+radius; y++ {
-			for x := center.GetX() - radius; x < center.GetX()+radius; x++ {
-				pos := &Position{x, y}
-				normalized := gm.Normalize(pos)
-				list = append(list, gm.AtPosition(normalized))
-			}
-		}
-	} else {
-		for y := 0; y < gm.height; y++ {
-			for x := 0; x < gm.width; x++ {
-				pos := &Position{x, y}
-				list = append(list, gm.AtPosition(pos))
-			}
+	for y := center.GetY() - radius; y < center.GetY()+radius; y++ {
+		halfWidth := radius - AbsInt(center.GetY()-y)
+		for x := center.GetX() - halfWidth; x <= center.GetX()+halfWidth; x++ {
+			pos := &Position{x, y}
+			normalized := gm.Normalize(pos)
+			list = append(list, gm.AtPosition(normalized))
 		}
 	}
 
@@ -134,7 +134,6 @@ func (gm *GameMap) NaiveNavigate(ship *Ship, destination *Position) *Direction {
 		var targetPos, _ = ship.E.Pos.DirectionalOffset(direction)
 		targetPos = gm.Normalize(targetPos)
 		if !gm.at(targetPos).IsOccupied() {
-			gm.at(targetPos).MarkUnsafe(ship)
 			return direction
 		}
 	}
