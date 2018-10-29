@@ -41,18 +41,12 @@ func AbsInt(x int) int {
 // sorted by Halite in descending order
 func (gm *GameMap) CellsByHalite(center *Position, radius int) []*MapCell {
 	var list []*MapCell
-	if radius < gm.width {
-		for y := center.GetY() - radius; y < center.GetY()+radius; y++ {
-			halfWidth := radius - AbsInt(center.GetY()-y)
-			for x := center.GetX() - halfWidth; x <= center.GetX()+halfWidth; x++ {
-				pos := &Position{x, y}
-				normalized := gm.Normalize(pos)
-				list = append(list, gm.AtPosition(normalized))
+	for _, row := range gm.Cells {
+		for _, cell := range row {
+			dist := gm.CalculateDistance(center, cell.Pos)
+			if dist <= radius {
+				list = append(list, cell)
 			}
-		}
-	} else {
-		for _, row := range gm.Cells {
-			list = append(list, row...)
 		}
 	}
 
