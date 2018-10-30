@@ -133,7 +133,7 @@ func (gm *GameMap) NaiveNavigate(ship *Ship, destination *Position) *Direction {
 	for _, direction := range unsafeMoves {
 		var targetPos, _ = ship.E.Pos.DirectionalOffset(direction)
 		targetPos = gm.Normalize(targetPos)
-		if !gm.at(targetPos).IsOccupied() {
+		if !gm.at(targetPos).IsOccupied() || (gm.AtPosition(targetPos).ship.GetPlayerID() != ship.GetPlayerID()) {
 			return direction
 		}
 	}
